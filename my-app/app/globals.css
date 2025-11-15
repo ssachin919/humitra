@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary: #2bee6c;
+  --color-background-light: #f6f8f6;
+  --color-background-dark: #102216;
+  --color-pastel-green: #D6F5E8;
+  --color-pastel-purple: #E8E1F5;
+  --color-text-primary: #212121;
+  --color-text-secondary: #61896f;
+  --color-border-color: #dbe6df;
+  
+  --radius: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  * {
+    @apply border-border-color;
+  }
+  body {
+    @apply bg-white text-text-primary;
+    font-family: var(--font-display), "Plus Jakarta Sans", sans-serif;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
