@@ -7,6 +7,7 @@ export interface IApplication extends Document {
   linkedin: string;
   role: string;
   about: string;
+  portfolioFileId?: string;
   portfolioFileName?: string;
   portfolioFileSize?: number;
   submittedAt: Date;
@@ -43,6 +44,10 @@ const ApplicationSchema = new Schema<IApplication>(
     about: {
       type: String,
       required: [true, "About section is required"],
+      trim: true,
+    },
+    portfolioFileId: {
+      type: String,
       trim: true,
     },
     portfolioFileName: {

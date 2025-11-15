@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import SuccessModal from "@/components/SuccessModal";
 
 const ROLES = ["Product", "Design", "Marketing", "Tech", "Operations", "Other"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ export default function Home() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
@@ -30,6 +33,31 @@ export default function Home() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
+    
+    if (file) {
+      // Validate file type
+      if (file.type !== "application/pdf") {
+        setSubmitStatus({
+          type: "error",
+          message: "Please upload a PDF file only.",
+        });
+        e.target.value = "";
+        return;
+      }
+      
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        setSubmitStatus({
+          type: "error",
+          message: "File size must be less than 10MB.",
+        });
+        e.target.value = "";
+        return;
+      }
+      
+      setSubmitStatus({ type: null, message: "" });
+    }
+    
     setFormData((prev) => ({ ...prev, portfolio: file }));
   };
 
@@ -39,29 +67,37 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate role selection
+    if (!formData.role) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please select a role you're applying for.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: "" });
 
     try {
-      // Prepare form data
-      const submissionData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        mobile: formData.mobile,
-        linkedin: formData.linkedin,
-        role: formData.role,
-        about: formData.about,
-        portfolioFileName: formData.portfolio?.name || undefined,
-        portfolioFileSize: formData.portfolio?.size || undefined,
-      };
+      // Prepare FormData for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("fullName", formData.fullName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("mobile", formData.mobile);
+      formDataToSend.append("linkedin", formData.linkedin);
+      formDataToSend.append("role", formData.role);
+      formDataToSend.append("about", formData.about);
+      
+      if (formData.portfolio) {
+        formDataToSend.append("portfolio", formData.portfolio);
+      }
 
       // Submit to API
       const response = await fetch("/api/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submissionData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -70,11 +106,8 @@ export default function Home() {
         throw new Error(data.error || "Failed to submit application");
       }
 
-      // Success
-      setSubmitStatus({
-        type: "success",
-        message: "Application submitted successfully! We'll get back to you soon.",
-      });
+      // Show success modal
+      setShowSuccessModal(true);
 
       // Reset form
       setFormData({
@@ -244,36 +277,44 @@ export default function Home() {
                         Upload Work Portfolio
                       </p>
                       <div className="relative flex items-center justify-center w-full h-32 px-4 py-3 border-2 border-dashed rounded-lg border-border-color bg-white/50 hover:bg-pastel-green/50 transition-colors duration-200">
-                        <div className="text-center">
-                          <span className="material-symbols-outlined text-4xl text-text-secondary">
-                            upload_file
-                          </span>
-                          <p className="text-sm text-text-secondary">
-                            Drag & drop files here or{" "}
-                            <span className="font-semibold text-primary/80">browse</span>
-                          </p>
-                          <p className="text-xs text-text-secondary/70">
-                            PDF or link, max 10MB
-                          </p>
-                        </div>
+                        {formData.portfolio ? (
+                          <div className="text-center">
+                            <span className="material-symbols-outlined text-4xl text-primary">
+                              description
+                            </span>
+                            <p className="text-sm text-text-primary font-medium mt-2">
+                              {formData.portfolio.name}
+                            </p>
+                            <p className="text-xs text-text-secondary/70">
+                              {(formData.portfolio.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <span className="material-symbols-outlined text-4xl text-text-secondary">
+                              upload_file
+                            </span>
+                            <p className="text-sm text-text-secondary">
+                              Drag & drop files here or{" "}
+                              <span className="font-semibold text-primary/80">browse</span>
+                            </p>
+                            <p className="text-xs text-text-secondary/70">
+                              PDF only, max 10MB
+                            </p>
+                          </div>
+                        )}
                         <input
                           aria-label="Upload Work Portfolio"
                           onChange={handleFileChange}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           type="file"
-                          accept=".pdf"
+                          accept=".pdf,application/pdf"
                         />
                       </div>
                     </div>
 
-                    {submitStatus.type && (
-                      <div
-                        className={`p-4 rounded-lg ${
-                          submitStatus.type === "success"
-                            ? "bg-pastel-green text-text-primary"
-                            : "bg-red-50 text-red-800"
-                        }`}
-                      >
+                    {submitStatus.type === "error" && (
+                      <div className="p-4 rounded-lg bg-red-50 text-red-800 border border-red-200">
                         <p className="text-sm font-medium">{submitStatus.message}</p>
                       </div>
                     )}
@@ -295,6 +336,11 @@ export default function Home() {
             </div>
           </section>
         </main>
+
+        <SuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+        />
 
         <footer className="py-10">
           <div className="px-4 mx-auto max-w-4xl">
