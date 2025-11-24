@@ -367,6 +367,15 @@ export default function Home() {
                   <span className="material-symbols-outlined text-xl">call</span>
                   <span className="text-sm">+91 98912 47897</span>
                 </a>
+                <a
+                  className="flex items-center gap-2 hover:text-text-primary transition-colors"
+                  href="https://www.linkedin.com/company/webyalaya/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="material-symbols-outlined text-xl">link</span>
+                  <span className="text-sm">LinkedIn</span>
+                </a>
               </div>
               <p className="text-text-secondary text-sm">
                 Made with ❤️ by Humans, for Humans.
