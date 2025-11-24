@@ -10,7 +10,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Humitra Pvt. Ltd. | Join Us",
-  description: "Join Humitra - We're building Webyalaya, a peer-to-peer learning platform",
+  description: "Join Humitra - We're building Webyalaya (https://webyalaya.com), a peer-to-peer learning platform",
 };
 
 export default function RootLayout({

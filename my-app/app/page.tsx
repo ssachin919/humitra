@@ -150,7 +150,14 @@ export default function Home() {
                   </h1>
                   <h2 className="text-text-primary text-lg font-normal leading-normal max-w-2xl mx-auto md:text-xl">
                     We're building{" "}
-                    <span className="text-primary font-semibold">Webyalaya</span>{" "}
+                    <a
+                      href="https://webyalaya.com"
+                      className="text-primary font-semibold hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Webyalaya
+                    </a>{" "}
                     — a peer-to-peer learning platform
                     <br />
                     where people can learn, share, and grow together.
@@ -348,17 +355,17 @@ export default function Home() {
               <div className="flex items-center gap-6 text-text-secondary">
                 <a
                   className="flex items-center gap-2 hover:text-text-primary transition-colors"
-                  href="mailto:hello@humitra.co"
+                  href="mailto:namaste@webyalaya.com"
                 >
                   <span className="material-symbols-outlined text-xl">mail</span>
-                  <span className="text-sm">hello@humitra.co</span>
+                  <span className="text-sm">namaste@webyalaya.com</span>
                 </a>
                 <a
                   className="flex items-center gap-2 hover:text-text-primary transition-colors"
-                  href="tel:+910000000000"
+                  href="tel:+919891247897"
                 >
                   <span className="material-symbols-outlined text-xl">call</span>
-                  <span className="text-sm">+91 00000 00000</span>
+                  <span className="text-sm">+91 98912 47897</span>
                 </a>
               </div>
               <p className="text-text-secondary text-sm">
